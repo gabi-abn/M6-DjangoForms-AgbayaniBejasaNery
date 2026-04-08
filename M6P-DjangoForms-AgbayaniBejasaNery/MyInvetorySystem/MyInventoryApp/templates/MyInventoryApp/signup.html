@@ -1,0 +1,39 @@
+{% extends "MyInventoryApp/base.html" %}
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    <div class="card shadow-sm mt-5">
+        <div class="card-header text-center bg-custom" style="background-color: #590404; color: white;">
+            <h3>Sign Up</h3>
+        </div>
+        <div class="card-body">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Choose a username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Choose a password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+            </form>
+
+            <hr>
+            <div class="text-center">
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100">Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
