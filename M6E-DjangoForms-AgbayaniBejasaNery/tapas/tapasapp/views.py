@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Account
 
 def login_view(request):
@@ -7,11 +8,14 @@ def login_view(request):
         password = request.POST.get('password', '').strip()
 
         account = Account.objects.filter(username=username, password=password).first()
+
         if account:
-            return redirect('view_supplier')
+            return redirect('view_supplier')  # your main page
         else:
             messages.error(request, 'Invalid login')
+
     return render(request, 'tapasapp/login.html')
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -20,7 +24,6 @@ def signup_view(request):
 
         if Account.objects.filter(username=username).exists():
             messages.error(request, 'Account already exists')
-            return render(request, 'tapasapp/signup.html')
         else:
             Account.objects.create(username=username, password=password)
             messages.success(request, 'Account created successfully')
