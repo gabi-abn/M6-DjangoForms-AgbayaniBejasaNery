@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Account
 
@@ -10,7 +10,7 @@ def login_view(request):
         account = Account.objects.filter(username=username, password=password).first()
 
         if account:
-            return redirect('view_supplier')  # your main page
+            return redirect('basic_list', pk=account.id)  # ✅ PASS PK
         else:
             messages.error(request, 'Invalid login')
 
@@ -30,3 +30,43 @@ def signup_view(request):
             return redirect('login')
 
     return render(request, 'tapasapp/signup.html')
+
+def basic_list(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+    return render(request, 'tapasapp/basic_list.html', {'account': account})
+
+
+def manage_account(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+    return render(request, 'tapasapp/manage_account.html', {'account': account})
+
+
+def change_password(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+
+    if request.method == 'POST':
+        current = request.POST.get('current_password')
+        new = request.POST.get('new_password')
+        confirm = request.POST.get('confirm_password')
+
+        if account.password != current:
+            messages.error(request, 'Incorrect current password')
+        elif new != confirm:
+            messages.error(request, 'Passwords do not match')
+        else:
+            account.password = new
+            account.save()
+            messages.success(request, 'Password updated successfully')
+            return redirect('manage_account', pk=pk)
+
+    return render(request, 'tapasapp/change_password.html', {'account': account})
+
+
+def delete_account(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+    account.delete()
+    return redirect('login')
+
+
+def logout_view(request):
+    return redirect('login')
