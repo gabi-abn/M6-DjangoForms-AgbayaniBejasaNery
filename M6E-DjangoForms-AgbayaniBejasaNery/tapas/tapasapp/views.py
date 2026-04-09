@@ -63,7 +63,7 @@ def change_password(request, pk):
 
 
 def delete_account(request, pk):
-    account = get_object_or_404(Account, pk=pk)
+    account = Account.objects.get(pk=pk)
     account.delete()
     return redirect('login')
 
