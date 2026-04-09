@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Dish 
+from .models import Dish, Account
 
 # Create your views here.
 
@@ -35,3 +35,26 @@ def update_dish(request, pk):
     else:
         d = get_object_or_404(Dish, pk=pk)
         return render(request, 'tapasapp/update_menu.html', {'d':d})
+    
+def signup_view(request):
+    if(request.method == "POST"):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if(Account.objects.filter(username=username).exists()):
+            return render(request, 'tapasapp/signup.html', {'error': 'Account already exists'})
+        else:
+            Account.objects.create(username=username, password=password)
+            return render(request, 'tapasapp/signup.html', {'success': 'Account created successfully'})
+        
+    return render(request, 'tapasapp/signup.html')
+    
+def login_view(request):
+    if(request.method=="POST"):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if(Account.objects.filter(username=username, password=password).exists()):
+            return redirect('better_menu')
+        else:
+            return render(request, 'tapasapp/login.html', {'error': 'Invalid username or password'})
+    else:
+        return render(request, 'tapasapp/login.html')
