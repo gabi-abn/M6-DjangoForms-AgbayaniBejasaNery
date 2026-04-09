@@ -26,4 +26,4 @@ def signup_view(request):
             messages.success(request, 'Account created successfully')
             return redirect('login')
 
-    return render(request, 'tapas/signup.html')
+    return render(request, 'tapasapp/signup.html')
