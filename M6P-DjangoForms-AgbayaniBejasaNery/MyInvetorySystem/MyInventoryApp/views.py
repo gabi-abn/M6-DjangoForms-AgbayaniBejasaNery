@@ -7,8 +7,13 @@ def view_supplier(request):
     return render(request, 'MyInventoryApp/view_supplier.html', {'suppliers': supplier_objects})
 
 def view_bottles(request):
-    bottle_objects = WaterBottle.objects.all()
-    return render(request, 'MyInventoryApp/view_bottles.html', {'bottles': bottle_objects})
+    supplier = get_object_or_404(Supplier, pk=supplier_id)
+    bottle_objects = WaterBottle.objects.filter(supplied_by=supplier)
+    return render(request, 'MyInventoryApp/view_bottles.html', {'bottles': bottle_objects, 'supplier': supplier})
+
+def view_bottle_details(request, pk):
+    bottle = WaterBottle.objects.get(pk=pk)
+    return render(request, 'MyInventoryApp/view_bottle_details.html', {'bottle': bottle})
 
 def add_bottle(request):
     supplier_objects = Supplier.objects.all()

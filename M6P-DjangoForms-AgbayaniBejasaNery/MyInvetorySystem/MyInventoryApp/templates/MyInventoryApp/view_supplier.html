@@ -4,6 +4,9 @@
 {% block content %}
 <div class="col-12">
     <h2>Suppliers</h2>
+    <a href="{% url 'add_bottle' %}" class="btn btn-primary mb-3">Add Water Bottle</a>
+    <a href="{% url 'manage_account' 1 %}" class="btn btn-warning">Manage Account</a>
+    <a href="{% url 'login' %}" class='btn btn-danger'>Logout</a>
     <table class="table table-striped">
         <thead>
             <th scope="col"> Name </th>
@@ -13,7 +16,7 @@
         <tbody>
             {% for s in suppliers %}
             <tr>
-                <td> {{ s.name }} </td>
+                <td> <a href="{% url 'view_bottles' s.id %}"> {{ s.name }} </a> </td>
                 <td> {{ s.city }} </td>
                 <td> {{ s.country }} </td>
             </tr>
