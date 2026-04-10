@@ -9,10 +9,14 @@ def view_supplier(request):
     supplier_objects = Supplier.objects.all()
     return render(request, 'MyInventoryApp/view_supplier.html', {'suppliers': supplier_objects})
 
-def view_bottles(request):
+def view_bottles(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
-    bottle_objects = WaterBottle.objects.filter(supplied_by=supplier)
-    return render(request, 'MyInventoryApp/view_bottles.html', {'bottles': bottle_objects, 'supplier': supplier})
+    bottles = WaterBottle.objects.filter(supplied_by=supplier)
+
+    return render(request, 'MyInventoryApp/view_bottles.html', {
+        'bottles': bottles,
+        'supplier': supplier
+    })
 
 def view_bottle_details(request, pk):
     bottle = get_object_or_404(WaterBottle, pk=pk)
@@ -58,13 +62,21 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
 
-        account = Account.objects.filter(username=username, password=password).first()
-        
+        print("LOGIN DEBUG:", username, password)  # DEBUG ONLY
+
+        account = Account.objects.filter(username=username).first()
+
         if account:
-            request.session['account_id'] = account.id
-            return redirect('view_supplier')
+            print("FOUND USER:", account.username, account.password)
+
+            if account.password == password:
+                request.session['account_id'] = account.id
+                return redirect('view_supplier')
+            else:
+                messages.error(request, 'Invalid password')
         else:
-            messages.error(request, 'Invalid login')
+            messages.error(request, 'Account does not exist')
+
     return render(request, 'MyInventoryApp/login.html')
 
 def logout_view(request):
