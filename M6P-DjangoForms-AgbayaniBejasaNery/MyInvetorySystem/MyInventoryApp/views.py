@@ -91,3 +91,25 @@ def delete_account(request, pk):
     account.delete()
     request.session.flush()
     return redirect('login')
+
+def change_password(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+
+    if request.method == "POST":
+        current = request.POST['current_password']
+        new = request.POST['new_password']
+        confirm = request.POST['confirm_password']
+
+        if current != account.password:
+            messages.error(request, "Incorrect current password")
+        elif new != confirm:
+            messages.error(request, "Passwords do not match")
+        else:
+            account.password = new
+            account.save()
+            messages.success(request, "Password updated successfully")
+            return redirect('manage_account', pk=account.id)
+
+    return render(request, 'MyInventoryApp/change_password.html', {
+        'account': account
+    })
