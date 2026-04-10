@@ -5,11 +5,16 @@ from MyInventoryApp.models import Supplier, WaterBottle, Account
 def view_supplier(request):
     if 'account_id' not in request.session:
         return redirect('login')
-    
+
     supplier_objects = Supplier.objects.all()
-    return render(request, 'MyInventoryApp/view_supplier.html', {'suppliers': supplier_objects})
+    return render(request, 'MyInventoryApp/view_supplier.html', {
+        'suppliers': supplier_objects
+    })
 
 def view_bottles(request, supplier_id):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
     supplier = get_object_or_404(Supplier, pk=supplier_id)
     bottles = WaterBottle.objects.filter(supplied_by=supplier)
 
@@ -19,6 +24,9 @@ def view_bottles(request, supplier_id):
     })
 
 def view_bottle_details(request, pk):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
     bottle = get_object_or_404(WaterBottle, pk=pk)
 
     if request.method == "POST":
@@ -31,6 +39,9 @@ def view_bottle_details(request, pk):
     })
 
 def add_bottle(request):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
     suppliers = Supplier.objects.all()
 
     if request.method == "POST":
@@ -51,6 +62,12 @@ def add_bottle(request):
     })
 
 def manage_account(request, pk):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
+    if request.session['account_id'] != pk:
+        return redirect('view_supplier')
+
     account = get_object_or_404(Account, pk=pk)
 
     return render(request, 'MyInventoryApp/manage_account.html', {
@@ -62,22 +79,16 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
 
-        print("LOGIN DEBUG:", username, password)  # DEBUG ONLY
-
         account = Account.objects.filter(username=username).first()
 
-        if account:
-            print("FOUND USER:", account.username, account.password)
-
-            if account.password == password:
-                request.session['account_id'] = account.id
-                return redirect('view_supplier')
-            else:
-                messages.error(request, 'Invalid password')
+        if account and account.password == password:
+            request.session['account_id'] = account.id
+            return redirect('view_supplier')
         else:
-            messages.error(request, 'Account does not exist')
+            messages.error(request, 'Invalid login')
 
     return render(request, 'MyInventoryApp/login.html')
+
 
 def logout_view(request):
     request.session.flush()
@@ -99,12 +110,27 @@ def signup_view(request):
     return render(request, 'MyInventoryApp/signup.html')
 
 def delete_account(request, pk):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
+    if request.session['account_id'] != pk:
+        return redirect('view_supplier')
+
     account = get_object_or_404(Account, pk=pk)
     account.delete()
+
     request.session.flush()
+    messages.success(request, "Account deleted successfully")
+
     return redirect('login')
 
 def change_password(request, pk):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
+    if request.session['account_id'] != pk:
+        return redirect('view_supplier')
+
     account = get_object_or_404(Account, pk=pk)
 
     if request.method == "POST":
