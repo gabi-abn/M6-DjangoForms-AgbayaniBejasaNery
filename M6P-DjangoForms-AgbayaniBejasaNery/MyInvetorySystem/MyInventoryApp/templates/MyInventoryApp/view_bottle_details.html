@@ -13,6 +13,20 @@
 
 <br>
 
-<a href="#" class="btn btn-danger">Delete</a>
-<a href="{% url 'view_bottles' bottle.supplied_by.id %}" class ="btn btn-secondary">Back to Bottles</a>
+<div class="container-fluid mb-3">
+
+    <form method="POST" class="mb-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">
+            Delete
+        </button>
+    </form>
+
+    <a href="{% url 'view_bottles' bottle.supplied_by.id %}" 
+       class="btn btn-secondary w-100">
+        Back to Bottles
+    </a>
+
+</div>
+
 {% endblock %}
