@@ -11,16 +11,14 @@ def view_supplier(request):
         'suppliers': supplier_objects
     })
 
-def view_bottles(request, supplier_id):
+def view_bottles(request):
     if 'account_id' not in request.session:
         return redirect('login')
 
-    supplier = get_object_or_404(Supplier, pk=supplier_id)
-    bottles = WaterBottle.objects.filter(supplied_by=supplier)
+    bottles = WaterBottle.objects.all()
 
     return render(request, 'MyInventoryApp/view_bottles.html', {
         'bottles': bottles,
-        'supplier': supplier
     })
 
 def view_bottle_details(request, pk):
@@ -32,7 +30,7 @@ def view_bottle_details(request, pk):
     if request.method == "POST":
         supplier_id = bottle.supplied_by.id
         bottle.delete()
-        return redirect('view_bottles', supplier_id=supplier_id)
+        return redirect('view_bottles')
 
     return render(request, 'MyInventoryApp/view_bottle_details.html', {
         'bottle': bottle
