@@ -5,6 +5,16 @@
 
                 {% block content %}
                 <div class="col-12">
+                        <div class="mb-3 d-flex justify-content-between"> 
+                            <a href="{% url 'manage_account' pk=account_id %}" class="btn btn-primary">
+                                Manage Account
+                            </a>
+
+                            <a href="{% url 'logout' %}" class="btn btn-danger">
+                                Logout
+                            </a>
+                        </div>
+
                     <table class="table table-striped mb-5">
                         <thead>
                             <th scope="col"> Name </th>

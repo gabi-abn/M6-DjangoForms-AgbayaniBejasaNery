@@ -6,8 +6,16 @@ from .models import Dish, Account
 
 
 def better_menu(request):
+    if 'account_id' not in request.session:
+        return redirect('login')
+
     dish_objects = Dish.objects.all()
-    return render(request, 'tapasapp/better_list.html', {'dishes':dish_objects})
+    account_id = request.session.get('account_id')
+
+    return render(request, 'tapasapp/better_list.html', {
+        'dishes': dish_objects,
+        'account_id': account_id
+    })
 
 def add_menu(request):
     if(request.method=="POST"):
@@ -44,6 +52,7 @@ def login_view(request):
         account = Account.objects.filter(username=username, password=password).first()
 
         if account:
+            request.session['account_id'] = account.id #store user
             return redirect('better_menu')
         else:
             messages.error(request, 'Invalid login')
@@ -62,3 +71,37 @@ def signup_view(request):
             return redirect('login')
         
     return render(request, 'tapasapp/signup.html')
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('login')
+
+def manage_account(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+    return render(request, 'tapasapp/manage_account.html', {'account': account})
+
+def delete_account(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+    account.delete()
+    request.session.flush()
+    return redirect('login')
+
+def change_password(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+
+    if request.method == "POST":
+        current = request.POST.get('current_password')
+        new = request.POST.get('new_password')
+        confirm = request.POST.get('confirm_password')
+
+        if account.password != current:
+            messages.error(request, "Incorrect current password")
+        elif new != confirm:
+            messages.error(request, "Passwords do not match")
+        else:
+            account.password = new
+            account.save()
+            messages.success(request, "Password updated")
+            return redirect('manage_account', pk=pk)
+
+    return render(request, 'tapasapp/change_password.html', {'account': account})
