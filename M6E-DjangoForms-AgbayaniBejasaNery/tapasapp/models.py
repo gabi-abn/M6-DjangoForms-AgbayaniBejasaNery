@@ -4,8 +4,8 @@ from django.db import models
 
 class Dish(models.Model):
     name = models.CharField(max_length=300)
-    prep_time = models.IntegerField()
-    cook_time = models.IntegerField()
+    prep_time = models.PositiveIntegerField()
+    cook_time = models.PositiveIntegerField()
     objects = models.Manager()
 
     def __str__(self):
