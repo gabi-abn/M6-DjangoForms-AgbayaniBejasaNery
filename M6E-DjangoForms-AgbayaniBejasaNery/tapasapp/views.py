@@ -18,14 +18,21 @@ def better_menu(request):
     })
 
 def add_menu(request):
-    if(request.method=="POST"):
+    if request.method == "POST":
         dishname = request.POST.get('dname')
         cooktime = request.POST.get('ctime')
         preptime = request.POST.get('ptime')
-        Dish.objects.create(name=dishname, cook_time=cooktime, prep_time=preptime)
-        return redirect('better_menu')
-    else:
-        return render(request, 'tapasapp/add_menu.html')
+
+        if not dishname or not cooktime or not preptime:
+            messages.error(request, "Please fill up all fields.")
+            return redirect('add_menu')
+
+        else:
+            Dish.objects.create( name=dishname, cook_time=cooktime, prep_time=preptime )
+            messages.success(request, "Dish added successfully!")
+            return redirect('better_menu')
+
+    return render(request, 'tapasapp/add_menu.html')
 
 def view_detail(request, pk):
     d = get_object_or_404(Dish, pk=pk)
