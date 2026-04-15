@@ -4,7 +4,7 @@
 {% block content %}
 <div class="col-12">
     <h2>Suppliers</h2>
-    <a href="{% url 'add_bottle' %}" class="btn btn-primary mb-3">Add Water Bottle</a>
+    <a href="{% url 'add_bottle' %}" class="btn btn-primary">Add Water Bottle</a>
     <a href="{% url 'manage_account' request.session.account_id %}" class="btn btn-warning"> Manage Account </a>
     <a href="{% url 'logout' %}" class='btn btn-danger'>Logout</a>
     <table class="table table-striped">
