@@ -64,8 +64,7 @@ def delete_dish(request, pk):
 
         return redirect('view_detail', pk=pk)
 
-    return render(request, 'tapasapp/update_menu.html', {'d': d}) 
-    
+    return render(request, 'tapasapp/update_menu.html', {'d': d})    
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username', "").strip()
