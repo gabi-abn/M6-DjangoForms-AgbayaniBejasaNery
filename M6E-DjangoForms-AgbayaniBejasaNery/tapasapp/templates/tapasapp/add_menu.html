@@ -9,7 +9,15 @@
             <h5 class="card-title"> Type in Dish Details:</h5>
         </div>
         <div class="card-body">
-
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color:red; font-weight:bold; margin-bottom:10px;">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+            
             <form method="POST" action="{% url 'add_menu' %}">{% csrf_token %}
             
                 <div class="form-group">
