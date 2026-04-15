@@ -49,6 +49,11 @@ def update_dish(request, pk):
         
         Dish.objects.filter(pk=pk).update(cook_time=cooktime, prep_time=preptime)
         return redirect('view_detail', pk=pk)
+    
+    if cook_time <= 0 or prep_time <= 0:
+            messages.error(request, "Values must be positive numbers only.")
+            return redirect("update_dish", pk=pk)
+    
     else:
         d = get_object_or_404(Dish, pk=pk)
         return render(request, 'tapasapp/update_menu.html', {'d':d})
