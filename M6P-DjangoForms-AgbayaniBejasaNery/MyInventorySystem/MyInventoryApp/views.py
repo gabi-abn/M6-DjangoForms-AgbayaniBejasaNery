@@ -136,10 +136,18 @@ def change_password(request, pk):
         new = request.POST['new_password']
         confirm = request.POST['confirm_password']
 
+        # Check current password
         if current != account.password:
             messages.error(request, "Incorrect current password")
+
+        # Check new password is different
+        elif current == new:
+            messages.error(request, "New password must be different from current password")
+
+        # Check confirm password
         elif new != confirm:
             messages.error(request, "Passwords do not match")
+
         else:
             account.password = new
             account.save()
