@@ -42,29 +42,18 @@ def delete_dish(request, pk):
     Dish.objects.filter(pk=pk).delete()
     return redirect('better_menu')
 
-    if request.method == "POST":
+def update_dish(request, pk):
+    if(request.method=="POST"):
         cooktime = request.POST.get('ctime')
         preptime = request.POST.get('ptime')
-
-        try:
-            cooktime = float(cooktime)
-            preptime = float(preptime)
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter valid numbers.")
-            return redirect("update_dish", pk=pk)
-
-        if cooktime <= 0 or preptime <= 0:
-            messages.error(request, "Values must be positive numbers only.")
-            return redirect("update_dish", pk=pk)
-
-        Dish.objects.filter(pk=pk).update(
-            cook_time=cooktime,
-            prep_time=preptime
-        )
-
+        
+        Dish.objects.filter(pk=pk).update(cook_time=cooktime, prep_time=preptime)
         return redirect('view_detail', pk=pk)
-
-    return render(request, 'tapasapp/update_menu.html', {'d': d})    
+    
+    else:
+        d = get_object_or_404(Dish, pk=pk)
+        return render(request, 'tapasapp/update_menu.html', {'d':d})
+    
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username', "").strip()
