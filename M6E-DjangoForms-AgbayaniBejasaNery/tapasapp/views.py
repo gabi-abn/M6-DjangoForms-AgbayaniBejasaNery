@@ -46,6 +46,7 @@ def update_dish(request, pk):
     if(request.method=="POST"):
         cooktime = request.POST.get('ctime')
         preptime = request.POST.get('ptime')
+        
         Dish.objects.filter(pk=pk).update(cook_time=cooktime, prep_time=preptime)
         return redirect('view_detail', pk=pk)
     else:
